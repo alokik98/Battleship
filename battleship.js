@@ -18,7 +18,7 @@ var view = {
 var model = {
   boardSize : 7,
   numShips : 3,
-  shipsSunk : 0,
+  shipIsSunk : 0,
   shipLength : 3,
   ships : [{locations : ["06", "16", "26"], hits : ["", "", ""]},{locations : ["24", "34", "44"], hits : ["", "", ""]},
   {locations : ["10", "11", "12"], hits : ["", "", ""]}],
@@ -32,7 +32,7 @@ var model = {
         view.displayMessage("HIT!");
         if (this.isSunk(ship)) {
           view.displayMessage("You sank my battleship");
-          this.shipsSunk++;
+          this.shipIsSunk++;
         }
         return true;
       }
@@ -47,4 +47,37 @@ var model = {
     }
     return true;
   }
+}
+
+var controller = {
+  guesses: 0,
+  processGuess: function(guess) {
+    var location = parseGuess(guess);
+    if (location) {
+      this.guesses++;
+      var hit = model.fire(location);
+      if (hit && model.shipIsSunk === model.numShips) {
+        view.displayMessage("You Sunk all the ships in " + this.guesses + " guesses.");
+      }
+    }
+  }
+}
+
+function parseGuess(guess) {
+  var alphabet = ["A", "B", "C", "D", "E", "F", "G"];
+  if (guess === null || guess.length !== 2) {
+    alert("Oops, please enter a letter and a number on the board.");
+  } else {
+    var firstChar = guess.charAt(0);
+    var row = alphabet.indexOf(firstChar);
+    var column = guess.charAt(1);
+  }
+  if(isNaN(row) || isNaN(column)) {
+    alert("Oops, that isn't on the board.");
+  } else if (row < 0 || row >=model.boardSize || column < 0 || column >= model.boardSize) {
+    alert("Oops, that's off the board!");
+  } else {
+    return row + column;
+  }
+  return null;
 }
